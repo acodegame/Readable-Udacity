@@ -1,10 +1,40 @@
-export function showDateTime(timestamp) {
-  const postTimestamp = new Date(timestamp);
-  // Write the logic here to show relative time if necessary
-  // Level 1 - 30 sec ago, 20 mins ago, 3 hr ago, yesterday.
-  // Level 2 - If post is of current year don't show year. Format: 23 March at 10:00
-  // Level 3 - If post is not of current year show exact date time. Format: 23 March 2016, 10:00:12 PM
-  return postTimestamp.toLocaleString();
+export function convertTime(time) {
+  let d = new Date();
+  let currentTime = Math.floor(d.getTime() / 1000);
+  let seconds = currentTime - Math.floor(time / 1000);
+
+  // more than a year ago
+  if (seconds > 365*24*3600) {
+    const ago = Math.floor(seconds / (365*24*3600));
+    return ago + (ago === 1 ? ' year ' : ' years ') + 'ago';
+  }
+
+  // more that two days
+  if (seconds > 2*24*3600) {
+    return 'few days ago';
+  }
+
+  // a day
+  if (seconds > 24*3600) {
+    return 'yesterday';
+  }
+
+  if (seconds > 3600) {
+    return 'few hours ago';
+  }
+
+  if (seconds > 1800) {
+    return 'Half an hour ago';
+  }
+
+  if (seconds > 60) {
+    const minsAgo = Math.floor(seconds/60)
+    return minsAgo===1 ? minsAgo + ' minute ago':  minsAgo + ' minutes ago';
+  }
+
+  if (seconds < 60) {
+    return 'Few seconds ago';
+  }
 }
 
 export function guid() {
@@ -14,4 +44,8 @@ export function guid() {
       .substring(1);
   }
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+export function convertObjectToArray(obj) {
+  return Object.keys(obj).map(k => obj[k])
 }

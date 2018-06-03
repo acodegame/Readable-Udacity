@@ -37,11 +37,7 @@ body {
   margin-left: 20px;
 }
 
-.posts {
-  float: left;
-}
-
-.post, .create-post {
+.create-post {
   margin: 10px;
 }
 
@@ -61,6 +57,30 @@ body {
 
 .comment {
   margin: 20px;
+}
+
+.spinner {
+  display: block;
+  margin: 0 auto;
+  margin-top: 100px;
+}
+
+.spinner-container {
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  display: block;
+  top: 100px;
+}
+
+.path {
+  stroke-dasharray: 187;
+  stroke-dashoffset: 0;
+  -webkit-transform-origin: center;
+      -ms-transform-origin: center;
+          transform-origin: center;
+  -webkit-animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+          animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
 }
 
 a:visited { text-decoration: none; color:black; }

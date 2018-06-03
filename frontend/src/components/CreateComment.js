@@ -1,22 +1,27 @@
 import React, { Component } from 'react';
 import * as Utils from '../utils';
+import { addComment, editComment } from '../actions';
 import { connect } from 'react-redux';
-import { addPost, editPost } from '../actions';
 import PropTypes from 'prop-types';
 import * as Constants from '../constants';
 
-class CreatePost extends Component {
-  handleSubmit = (e) => {
+class CreateComment extends Component {
+  constructor (props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e) {
     e.preventDefault();
     if (this.props.mode === Constants.ACTION_MODE.CREATE) {
-      this.callCreatePostAPI();
+      this.callCreateCommentAPI();
     } else if (this.props.mode === Constants.ACTION_MODE.EDIT) {
-      this.callEditPostAPI();
+      this.callEditCommentAPI();
     }
     this.props.afterSubmit();
   }
 
-  callCreatePostAPI() {
+  callCreateCommentAPI() {
     //1. generate UUID unique ID.
     const uuid = Utils.guid();
 
@@ -27,9 +32,9 @@ class CreatePost extends Component {
     }
     data['id'] = uuid;
     data['timestamp'] = Date.now();
-
+    data['parentId'] = this.props.parentId;
     // POST call to API server.
-    fetch('http://localhost:3001/posts', {
+    fetch('http://localhost:3001/comments', {
       body: JSON.stringify(data),
       headers: {
         'Accept': 'application/json, text/plain, */*',
@@ -38,16 +43,15 @@ class CreatePost extends Component {
       },
       method: 'POST'
     }).then(res => res.json())
-      .then(res => this.props.dispatch(addPost(res)));
+      .then(res => this.props.dispatch(addComment(res)));
   }
 
-  callEditPostAPI() {
+  callEditCommentAPI() {
     const data = {}
-    data['title'] = this.refs['title'].value;
+    data['timestamp'] = Date.now();
     data['body'] = this.refs['body'].value
-    console.log("EditPost data ", data);
-    // POST call to API server.
-    fetch(`http://localhost:3001/posts/${this.props.data.id}`, {
+    console.log("EditComment data ", data);
+    fetch(`http://localhost:3001/comments/${this.props.data.id}`, {
       body: JSON.stringify(data),
       headers: {
         'Accept': 'application/json, text/plain, */*',
@@ -56,7 +60,7 @@ class CreatePost extends Component {
       },
       method: 'PUT'
     }).then(res => res.json())
-      .then(res => this.props.dispatch(editPost(res)));
+      .then(res => this.props.dispatch(editComment(res)));
   }
 
   render () {
@@ -77,25 +81,12 @@ class CreatePost extends Component {
             />}
           </label>
           <label>
-            Title:
-            <input
-                type="text"
-                ref="title"
-                defaultValue={this.props.data && this.props.data.title}
-                className="create-post-author"
-                placeholder="Your name..."
-                required
-            />
-          </label>
-          <label>
             Body:
-            <textarea ref="body" defaultValue={this.props.data && this.props.data.body} />
+            <textarea
+              ref="body"
+              defaultValue={this.props.mode === Constants.ACTION_MODE.EDIT ? this.props.data.body : ""}
+              required/>
           </label>
-          <select ref="category" defaultValue={this.props.data && this.props.data.category} >
-            {this.props.categories.map(category => (
-              <option value = {category.name} key = {category.name}>{category.name}</option>
-            ))}
-          </select>
           <input type="submit" value="Submit" />
           <input type="reset" value="Reset" />
         </form>
@@ -104,27 +95,20 @@ class CreatePost extends Component {
 
     return(
       <div className="create-post">
-        <b> {this.props.mode === Constants.ACTION_MODE.CREATE ? 'Create' : 'Edit'} Post </b>
+        <b> {this.props.mode === Constants.ACTION_MODE.CREATE ? 'Create' : 'Edit'} Comment </b>
         {createPostForm}
       </div>
     )
   }
 }
 
-
-CreatePost.propTypes = {
-  mode: PropTypes.oneOf(Object.keys(Constants.ACTION_MODE)),
+CreateComment.propTypes = {
+  mode: PropTypes.oneOf(Object.keys(Constants.ACTION_MODE)).isRequired,
+  data: PropTypes.object // in case of Edit we already have the data.
 }
 
-CreatePost.defaultProps = {
+CreateComment.defaultProps = {
   mode: Constants.ACTION_MODE.CREATE
 }
 
-const mapStateToProps = ({posts, comments, categories}, props) => {
-  const categoriesArray = Object.keys(categories).map(k => categories[k]);
-  return {
-    categories: categoriesArray,
-  }
-}
-
-export default connect(mapStateToProps)(CreatePost);
+export default connect()(CreateComment);

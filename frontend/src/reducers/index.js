@@ -1,93 +1,81 @@
 import {
+  INITIALIZE_POSTS,
+  INITIALIZE_COMMENTS,
+  INITIALIZE_CATEGORIES,
   ADD_POST,
+  EDIT_POST,
   VOTE_POST,
+  DELETE_POST,
   ADD_COMMENT,
+  EDIT_COMMENT,
   VOTE_COMMENT,
+  DELETE_COMMENT,
 } from '../actions';
 import { combineReducers } from 'redux';
-
-const initialCommentsState = {
-  "894tuq4ut84ut8v4t8wun89g": {
-    id: '894tuq4ut84ut8v4t8wun89g',
-    parentId: "8xf0y6ziyjabvozdd253nd",
-    timestamp: 1468166872634,
-    body: 'Hi there! I am a COMMENT.',
-    author: 'thingtwo',
-    voteScore: 6,
-    deleted: false,
-    parentDeleted: false
-  },
-  "8tu4bsun805n8un48ve89": {
-    id: '8tu4bsun805n8un48ve89',
-    parentId: "8xf0y6ziyjabvozdd253nd",
-    timestamp: 1469479767190,
-    body: 'Comments. Are. Cool.',
-    author: 'thingone',
-    voteScore: -5,
-    deleted: false,
-    parentDeleted: false
-  }
-}
-
-const initialPostsState = {
-    "8xf0y6ziyjabvozdd253nd": {
-      id: '8xf0y6ziyjabvozdd253nd',
-      timestamp: 1467166872634,
-      title: 'Udacity is the best place to learn React',
-      body: 'Everyone says so after all.',
-      author: 'thingtwo',
-      category: 'react',
-      voteScore: 6,
-      deleted: false,
-      commentCount: 2
-    },
-    "6ni6ok3ym7mf1p33lnez": {
-      id: '6ni6ok3ym7mf1p33lnez',
-      timestamp: 1468479767190,
-      title: 'Learn Redux in 10 minutes!',
-      body: 'Just kidding. It takes more than 10 minutes to learn technology.',
-      author: 'thingone',
-      category: 'redux',
-      voteScore: -5,
-      deleted: false,
-      commentCount: 0
-    }
-}
+import * as Utils from '../utils';
 
 /*
   This reducer will take care of all the user interactions.
   As of now only like, comment and share is supported.
-  TODO: add more switch cases or make this method more generic.
+  TODO: We could've made a heirarchial state structure where
+  1. Categories - will be the root node, which will point to the posts they have
+  2. Posts - will have all the posts and they will point to the comments based on parentId of comments.
+  3. Comments - will have comments which might point to replies in the future.
+  4. Replies - This will be the last level of heirarchy at this point of time.
 */
-function posts(state = initialPostsState, action) {
-  const { postId, authorId, postBody } = action;
-
+function posts(state = {}, action) {
   switch(action.type) {
+    case INITIALIZE_POSTS:
+      // Convert objects of posts into array of posts
+      const posts = Utils.convertObjectToArray(action.posts);
+      return Object.assign({}, state, posts);
     case ADD_POST:
-      return {
-
-      }
+      return Object.keys(state).map(k => state[k]).concat(action.post);
+    case EDIT_POST:
+      return Object.keys(state).map(k => state[k]).map(post => post.id===action.post.id
+              ? {...post, ['title']: action.post.title, ['body']: action.post.body}
+              : {...post});
     case VOTE_POST:
-      return {
-
-      }
+      return Object.keys(state).map(k => state[k]).map(post => post.id===action.id
+              ? {...post, ['voteScore']: post.voteScore + action.vote}
+              : {...post});
+    case DELETE_POST:
+      return Object.keys(state).map(k => state[k]).map(post => post.id===action.id
+              ? {...post, ['deleted']: true}
+              : {...post});
     default:
       return state;
   }
 }
 
-function comments(state = initialCommentsState, action) {
-  const { commentId, parentId, commentBody, author } = action;
-
+function categories(state = {}, action) {
   switch(action.type) {
+    case INITIALIZE_CATEGORIES:
+      return Object.assign({}, state, action.categories);
+    default:
+      return state;
+  }
+}
+
+function comments(state = {}, action) {
+  switch(action.type) {
+    case INITIALIZE_COMMENTS:
+      const comments = Utils.convertObjectToArray(action.comments);
+      return Object.assign({}, state, comments);
     case ADD_COMMENT:
-      return {
-
-      }
+      return Object.keys(state).map(k => state[k]).concat(action.comment);
+    case EDIT_COMMENT:
+    return Object.keys(state).map(k => state[k]).map(comment => comment.id===action.comment.id
+            ? {...comment, ['body']: action.comment.body}
+            : {...comment});
     case VOTE_COMMENT:
-      return {
-
-      }
+      return Object.keys(state).map(k => state[k]).map(comment => comment.id===action.id
+              ? {...comment, ['voteScore']: comment.voteScore + action.vote}
+              : {...comment});
+    case DELETE_COMMENT:
+      return Object.keys(state).map(k => state[k]).map(comment => comment.id===action.id
+              ? {...comment, ['deleted']: true}
+              : {...comment});
     default:
       return state;
   }
@@ -96,4 +84,5 @@ function comments(state = initialCommentsState, action) {
 export default combineReducers({
   posts,
   comments,
+  categories,
 });

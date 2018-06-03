@@ -1,15 +1,29 @@
 import React, { Component } from 'react';
-import Post from './Post';
-import { Link } from 'react-router-dom';
-import CreatePost from './CreatePost';
 import { connect } from 'react-redux';
+import { initializePosts, initializeCategories } from '../actions';
+import LeftPane from './panes/LeftPane';
+import MiddlePane from './panes/MiddlePane';
+import RightPane from './panes/RightPane';
+
+import Header from './subs/Header';
+import Spinner from './subs/Spinner';
+
+const pagination = 10;
+
+const styleLayout = {
+  siteWrapper: {
+          display: 'flex',
+          flexDirection: "column",
+          minHeight: '100vh'
+  },
+  site: {
+          display: 'flex',
+          flexGrow: '1',
+          background: '#e9ebee'
+  },
+}
 
 class FeedView extends Component {
-  // TODO: Move all these states to Redux store
-  state = {
-    posts: undefined,
-    categories: undefined,
-  }
 
   componentDidMount() {
     /*
@@ -24,88 +38,91 @@ class FeedView extends Component {
       8. Introduce the concept of throttle-debounce in order to optimize network calls even more and to make application smoother.
     */
 
+    /*
+      TODO: Check first in the store cache if it doesn't have enough posts
+      then make a call.
+    */
     // Posts GET Call
     fetch('http://localhost:3001/posts', {
       headers: {
         'Authorization': 'Basic '+btoa('shashi:123')
       }
     }).then(res => res.json()).then(res => {
-      // TODO: Dispatch actions to update the store with this data.
-      this.setState({ posts: res });
-    });
-
-    // Categories GET Call
-    fetch('http://localhost:3001/categories', {
-      headers: {
-        'Authorization': 'Basic '+btoa('shashi:123')
-      }
-    }).then(res => res.json()).then(res => {
-      // TODO: Dispatch actions to update the store with this data.
-      this.setState({ categories: res.categories });
+      this.props.initializePosts(res);
     });
 
     /*
-      TODO: Add implementation of refreshing this page when user creates new post.
+      TODO: Check first in the store cache if it doesn't have enough categories
+      then make a call.
+    */
+    // Categories GET Call
+    fetch('http://localhost:3001/categories', {
+      headers: {
+        'Authorization': 'Basic '+ btoa('shashi:123')
+      }
+    }).then(res => res.json()).then(res => {
+      this.props.initializeCategories(res.categories);
+    });
+
+    /*
+      TODO: Add implementation of sorting the post based on voteScore and timestamp.
     */
   }
 
+  showLoader() {
+    this.setState({
+      isLoading: true
+    });
+  }
+
+  hideLoader() {
+    this.setState({
+      isLoading: false
+    });
+  }
+
   render() {
-    if (this.state.posts === undefined || this.state.categories === undefined) {
+    if (this.props.posts === undefined || this.props.categories === undefined) {
       return null;
     }
 
     return (
-      <div className='root'>
-        <div className="header">
-        </div>
-        <div className="body">
-          <CreatePost categories={this.state.categories}/>
-          <div className="posts">
-            {this.state.posts.map(post => post.title && (
-              <Link
-                  to={{
-                    pathname: '/post',
-                    state: { post: post }
-                  }}
-                  style={{ textDecoration: 'none' }}
-                  key={post.id}
-              >
-                <Post {...post} key={post.id} />
-              </Link>
-            ))}
-          </div>
+      <div style={styleLayout.siteWrapper}>
+        {
+          /*
+            Make sure to send "top" prop in Left and Right pane same as whenever
+            height prop is send to Header. This is to ensure that the navs will
+            stick to header while scrolling.
+          */
+        }
+        <Header headerText="Readable"/>
 
-          <div className="right-nav">
-            <h4 className="right-nav-header"> Categories </h4>
-            <div className="categories">
-              {this.state.categories.map(category => (
-                <Link
-                    to={{
-                      pathname: '/category',
-                      state: { category: category.path }
-                    }}
-                    style={{ textDecoration: 'none' }}
-                    key={category.name}
-                >
-                  {category.name}
-                </Link>
-              ))}
-            </div>
-          </div>
+        <div style={styleLayout.site}>
+          <LeftPane />
+          <MiddlePane posts={this.props.posts} categories={this.props.categories}/>
+          <RightPane categories={this.props.categories}/>
         </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ posts, comments }) => {
+const mapStateToProps = ({ posts, comments, categories }) => {
+  //console.log("FeedView: posts", posts, ", comments ", comments, ",categories ", categories);
   // Converting posts object to array
   const postsArray = Object.keys(posts).map(k => posts[k]);
+  const categoriesArray = Object.keys(categories).map(k => categories[k]);
   return ({
-    posts: postsArray
+    posts: postsArray,
+    categories: categoriesArray,
   });
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    initializePosts: (data) => dispatch(initializePosts(data)),
+    initializeCategories: (data) => dispatch(initializeCategories(data))
+  }
+}
 
-
-export default connect(mapStateToProps)(FeedView);
+export default connect(mapStateToProps, mapDispatchToProps)(FeedView);

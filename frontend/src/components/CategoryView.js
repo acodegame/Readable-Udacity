@@ -6,6 +6,11 @@ class CategoryView extends Component {
     posts: undefined
   }
 
+  /*
+    TODO: This CategoryView should be deleted or make it a Functional Stateless component
+    FeedView later will have four blocks, kindly look into the block details in FeedView component.
+  */
+
   componentDidMount() {
     // Posts of certain category GET Call
     fetch(`http://localhost:3001/${this.props.location.state.category}/posts`, {
