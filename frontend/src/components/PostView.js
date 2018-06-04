@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { initializeComments } from '../actions';
 import Modal from './subs/Modal';
 import CreateComment from './CreateComment';
-import * as Constants from '../constants';
 
 /**
  *  TODO - Comment count is not updating, have to do something where we need to catch

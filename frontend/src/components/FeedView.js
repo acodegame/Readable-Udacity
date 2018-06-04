@@ -100,7 +100,7 @@ class FeedView extends Component {
         <div style={styleLayout.site}>
           <LeftPane />
           <MiddlePane posts={this.props.posts} categories={this.props.categories}/>
-          <RightPane categories={this.props.categories}/>
+          <RightPane />
         </div>
       </div>
     );

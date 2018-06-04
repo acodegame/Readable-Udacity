@@ -9,7 +9,6 @@ import Share from './subs/Share';
 import Edit from './subs/Edit';
 import Delete from './subs/Delete';
 import * as Constants from '../constants';
-import { connect } from 'react-redux';
 
 class Post extends Component {
   render() {
@@ -137,15 +136,6 @@ class Post extends Component {
         </div>
       </div>
     );
-  }
-}
-
-const mapStateToProps = (state, props) => {
-  const {posts} = state;
-  const postsArray = Object.keys(posts).map(k => posts[k]).filter(post => post.id === props.id);
-  // There can't be more than one post.
-  return {
-    ...postsArray[0]
   }
 }
 

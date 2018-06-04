@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Post from '../Post';
 import CreatePost from '../CreatePost';
 import Modal from '../subs/Modal';
-import * as Constants from '../../constants';
 
 /**
  *  Class for displaying the Middle pane.

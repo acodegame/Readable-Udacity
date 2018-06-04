@@ -81,7 +81,11 @@ class Comment extends Component {
 
           <div style={styles.postActions}>
             <Edit size={15} editType={Constants.ACTION_GENERATORS.COMMENT} data={this.props} />
-            <Delete deleteType={Constants.ACTION_GENERATORS.COMMENT} id={this.props.id} size={15} />
+            <Delete
+              deleteType={Constants.ACTION_GENERATORS.COMMENT}
+              id={this.props.id}
+              size={15}
+              parentId={this.props.parentId} />
           </div>
         </div>
         <LineSeperator />

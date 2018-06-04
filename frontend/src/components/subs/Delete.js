@@ -29,7 +29,7 @@ class Delete extends Component {
       this.callDeleteAPI('posts');
     }
     if (this.props.deleteType === Constants.ACTION_GENERATORS.COMMENT) {
-      this.props.deleteComment(this.props.id);
+      this.props.deleteComment(this.props);
       this.callDeleteAPI('comments');
     }
     // Dispatch an action to update store

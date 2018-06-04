@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import * as Utils from '../../utils';
 
 /**
  *  Class for displaying the Right pane.
@@ -21,6 +23,10 @@ class RightPane extends Component {
         border: '1px solid #c8cbd0',
         borderWidth: 'thin',
       },
+    }
+
+    if (Object.keys(this.props.categories).length === 0 && this.props.categories.constructor === Object) {
+      return null;
     }
 
     return (
@@ -53,4 +59,11 @@ RightPane.defaultProps = {
   top: '42px'
 };
 
-export default RightPane;
+const mapStateToProps = ({ categories }) => {
+  const categoriesArray = Utils.convertObjectToArray(categories);
+  return {
+    categories: categoriesArray
+  }
+}
+
+export default connect(mapStateToProps)(RightPane);
