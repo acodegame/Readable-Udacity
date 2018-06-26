@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { sort, SORT_DESC, SORT_ASC } from '../../actions';
+import { sort } from '../../actions';
+import * as ActionTypes from '../../actions/types';
 import * as Constants from '../../constants';
 import { connect } from 'react-redux';
 
@@ -17,8 +18,8 @@ class LeftPane extends Component {
   sortByTime = (e) => {
     // Doing the opposite because state is being changed later.
     const sortType = this.state.sortByTimeAsc === false
-                      ? SORT_ASC
-                      : SORT_DESC
+                      ? ActionTypes.SORT_ASC
+                      : ActionTypes.SORT_DESC
     this.props.dispatch(sort(sortType, Constants.SORT_BY.TIMESTAMP));
     this.setState({ sortByTimeAsc: !this.state.sortByTimeAsc });
   }
@@ -26,8 +27,8 @@ class LeftPane extends Component {
 sortByVoteScore = (e) => {
     // Doing the opposite because state is being changed later.
     const sortType = this.state.sortByVoteScoreAsc === false
-                      ? SORT_ASC
-                      : SORT_DESC
+                      ? ActionTypes.SORT_ASC
+                      : ActionTypes.SORT_DESC
     this.props.dispatch(sort(sortType, Constants.SORT_BY.VOTE_SCORE));
     this.setState({ sortByVoteScoreAsc: !this.state.sortByVoteScoreAsc });
   }

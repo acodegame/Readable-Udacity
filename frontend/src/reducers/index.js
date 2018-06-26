@@ -1,19 +1,4 @@
-import {
-  INITIALIZE_POSTS,
-  INITIALIZE_COMMENTS,
-  INITIALIZE_CATEGORIES,
-  ADD_POST,
-  EDIT_POST,
-  VOTE_POST,
-  DELETE_POST,
-  ADD_COMMENT,
-  EDIT_COMMENT,
-  VOTE_COMMENT,
-  DELETE_COMMENT,
-  SORT_DESC,
-  SORT_ASC,
-  CATEGORY_DATA
-} from '../actions';
+import * as ActionTypes from '../actions/types';
 import { combineReducers } from 'redux';
 import * as Utils from '../utils';
 import * as Constants from '../constants';
@@ -30,33 +15,34 @@ import * as Constants from '../constants';
 function posts(state = {}, action) {
   const stateArray = Utils.convertObjectToArray(state);
   switch(action.type) {
-    case INITIALIZE_POSTS:
+    case ActionTypes.INITIALIZE_POSTS:
       // Convert objects of posts into array of posts
       const posts = Utils.convertObjectToArray(action.posts);
+      console.log("InitializePost reducer: ", Object.assign({}, state, posts));
       return Object.assign({}, state, posts);
-    case ADD_POST:
+    case ActionTypes.ADD_POST:
       return stateArray.concat(action.post);
-    case EDIT_POST:
+    case ActionTypes.EDIT_POST:
       return stateArray.map(post => post.id===action.post.id
               ? {...post, 'title': action.post.title, 'body': action.post.body}
               : {...post});
-    case VOTE_POST:
+    case ActionTypes.VOTE_POST:
       return stateArray.map(post => post.id===action.id
               ? {...post, 'voteScore': post.voteScore + action.vote}
               : {...post});
-    case DELETE_POST:
+    case ActionTypes.DELETE_POST:
       return stateArray.map(post => post.id===action.id
               ? {...post, 'deleted': true}
               : {...post});
-    case ADD_COMMENT:
+    case ActionTypes.ADD_COMMENT:
       return stateArray.map(post => post.id===action.comment.parentId
               ? {...post, 'commentCount': post.commentCount + 1}
               : {...post});
-    case DELETE_COMMENT:
+    case ActionTypes.DELETE_COMMENT:
       return stateArray.map(post => post.id===action.parentId
               ? {...post, 'commentCount': post.commentCount - 1}
               : {...post});
-    case SORT_ASC:
+    case ActionTypes.SORT_ASC:
       if (action.sortBy === Constants.SORT_BY.VOTE_SCORE) {
         return {
           ...stateArray.sort((a, b) => a.voteScore >= b.voteScore)
@@ -69,7 +55,7 @@ function posts(state = {}, action) {
       return {
         ...state
       }
-    case SORT_DESC:
+    case ActionTypes.SORT_DESC:
       if (action.sortBy === Constants.SORT_BY.VOTE_SCORE) {
         return {
           ...stateArray.sort((a, b) => a.voteScore < b.voteScore)
@@ -90,9 +76,9 @@ function posts(state = {}, action) {
 function categories(state = {}, action) {
   const categoriesArray = Utils.convertObjectToArray(state);
   switch(action.type) {
-    case INITIALIZE_CATEGORIES:
+    case ActionTypes.INITIALIZE_CATEGORIES:
       return Object.assign({}, state, action.categories);
-    case CATEGORY_DATA:
+    case ActionTypes.CATEGORY_DATA:
       return categoriesArray.map(c => c.name === action.category
         ? {...c, 'posts': action.data.map(p => p.id)}
         : {...c})
@@ -103,20 +89,20 @@ function categories(state = {}, action) {
 
 function comments(state = {}, action) {
   switch(action.type) {
-    case INITIALIZE_COMMENTS:
+    case ActionTypes.INITIALIZE_COMMENTS:
       const comments = Utils.convertObjectToArray(action.comments);
       return Object.assign({}, state, comments);
-    case ADD_COMMENT:
+    case ActionTypes.ADD_COMMENT:
       return Object.keys(state).map(k => state[k]).concat(action.comment);
-    case EDIT_COMMENT:
+    case ActionTypes.EDIT_COMMENT:
     return Object.keys(state).map(k => state[k]).map(comment => comment.id===action.comment.id
             ? {...comment, 'body': action.comment.body}
             : {...comment});
-    case VOTE_COMMENT:
+    case ActionTypes.VOTE_COMMENT:
       return Object.keys(state).map(k => state[k]).map(comment => comment.id===action.id
               ? {...comment, 'voteScore': comment.voteScore + action.vote}
               : {...comment});
-    case DELETE_COMMENT:
+    case ActionTypes.DELETE_COMMENT:
       return Object.keys(state).map(k => state[k]).map(comment => comment.id===action.id
               ? {...comment, 'deleted': true}
               : {...comment});

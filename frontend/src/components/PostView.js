@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Post from './Post';
 import Comment from './Comment';
 import { connect } from 'react-redux';
-import { initializeComments } from '../actions';
+import { initializeComments, initializePosts } from '../actions';
 import Modal from './subs/Modal';
 import CreateComment from './CreateComment';
 
@@ -29,13 +29,24 @@ class PostView extends Component {
       then make a call.
     */
     // Getting comments of a certain posts to display in Detail view
-    fetch(`http://localhost:3001/posts/${this.props.location.state.post.id}/comments`, {
+    fetch(`http://localhost:3001/posts/${this.props.location.pathname.split('/')[2]}/comments`, {
       headers: {
         'Authorization': 'Basic '+ btoa('shashi:123')
       }
     }).then(res => res.json()).then(res => {
       this.props.initializeComments(res);
     });
+
+    if (this.props.post === undefined) {
+      // Posts GET Call
+      fetch('http://localhost:3001/posts', {
+        headers: {
+          'Authorization': 'Basic '+btoa('shashi:123')
+        }
+      }).then(res => res.json()).then(res => {
+        this.props.initializePosts(res);
+      });
+    }
   }
 
   render() {
@@ -46,7 +57,7 @@ class PostView extends Component {
         padding: '15px'
       }
     }
-    if (this.props.comments === undefined) {
+    if (this.props.comments === undefined || this.props.post === undefined) {
       return null;
     }
     const post = this.props.post;
@@ -73,7 +84,8 @@ class PostView extends Component {
 
 const mapStateToProps = ({ posts, comments }, props) => {
   // Converting posts object to array
-  const postId = props.location.state.post.id;
+  // pathname will look something like this /:category/:postId
+  const postId = props.location.pathname.split('/')[2];
   const postsArray = Object.keys(posts).map(k => posts[k]).filter(post => post.id === postId);
   const commentsArray = Object.keys(comments).map(k => comments[k]).filter(comment => comment.parentId === postId);
   return ({
@@ -84,7 +96,8 @@ const mapStateToProps = ({ posts, comments }, props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    initializeComments: (data) => dispatch(initializeComments(data))
+    initializeComments: (data) => dispatch(initializeComments(data)),
+    initializePosts: (data) => dispatch(initializePosts(data)),
   }
 }
 

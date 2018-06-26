@@ -93,7 +93,7 @@ class Post extends Component {
               to={{
                 // handle this link to be only applicable when the view is in
                 // FeedView not in PostView.
-                pathname: '/post',
+                pathname: `/${this.props.category}/${this.props.id}`,
                 state: { post: this.props }
               }}
               style={{ textDecoration: 'none' }}

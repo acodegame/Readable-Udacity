@@ -36,7 +36,7 @@ class RightPane extends Component {
           {this.props.categories.map(category => (
             <Link
                 to={{
-                  pathname: '/category',
+                  pathname: `/${category.path}`,
                   state: { category: category.path }
                 }}
                 style={{ textDecoration: 'none' }}

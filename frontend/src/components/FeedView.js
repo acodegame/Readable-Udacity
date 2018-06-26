@@ -63,10 +63,6 @@ class FeedView extends Component {
     }).then(res => res.json()).then(res => {
       this.props.initializeCategories(res.categories);
     });
-
-    /*
-      TODO: Add implementation of sorting the post based on voteScore and timestamp.
-    */
   }
 
   showLoader() {

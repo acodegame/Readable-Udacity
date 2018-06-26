@@ -10,8 +10,8 @@ class App extends Component {
     return (
       <div className="app">
         <Route exact path="/" component={FeedView} />
-        <Route path="/category" exact component={CategoryView} />
-        <Route path="/post" exact component={PostView} />
+        <Route path="/:category" exact component={CategoryView} />
+        <Route path="/:category/:post_id" exact component={PostView} />
       </div>
     );
   }
