@@ -44,18 +44,22 @@ class MiddlePane extends Component {
         paddingTop: '50px'
       },
       createPost: {
-        width: '40%'
+        width: '40%',
+        marginLeft: '10px',
       }
     };
 
     return (
       <div style={styles.contentView}>
-        <input
-          type={ this.state.type }
-          className="create-post-input"
-          onFocus={ this.showModal }
-          placeholder="What's on your mind ?"
-        />
+        <div style={styles.createPost}>
+          Create your post:
+          <input
+            type={ this.state.type }
+            className="create-post-input"
+            onFocus={ this.showModal }
+            placeholder="What's on your mind ?"
+          />
+        </div>
         <Modal show={this.state.showModal} handleClose={this.hideModal}>
           <CreatePost
             categories={this.props.categories}
