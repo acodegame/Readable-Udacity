@@ -18,7 +18,6 @@ function posts(state = {}, action) {
     case ActionTypes.INITIALIZE_POSTS:
       // Convert objects of posts into array of posts
       const posts = Utils.convertObjectToArray(action.posts);
-      console.log("InitializePost reducer: ", Object.assign({}, state, posts));
       return Object.assign({}, state, posts);
     case ActionTypes.ADD_POST:
       return stateArray.concat(action.post);

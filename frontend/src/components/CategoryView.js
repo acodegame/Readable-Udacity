@@ -125,7 +125,7 @@ const mapStateToProps = ({ posts, categories }, props) => {
   return {
     ...props,
     categories,
-    posts: postArray.filter(p => categoryArray.posts && categoryArray.posts.indexOf(p.id)!== -1)
+    posts: postArray.filter(p => categoryArray && categoryArray.posts && categoryArray.posts.indexOf(p.id)!== -1)
   };
 }
 
