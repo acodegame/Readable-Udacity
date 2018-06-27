@@ -12,14 +12,14 @@ const pagination = 10;
 
 const styleLayout = {
   siteWrapper: {
-          display: 'flex',
-          flexDirection: "column",
-          minHeight: '100vh'
+    display: 'flex',
+    flexDirection: "column",
+    minHeight: '100vh'
   },
   site: {
-          display: 'flex',
-          flexGrow: '1',
-          background: '#e9ebee'
+    display: 'flex',
+    flexGrow: '1',
+    background: '#e9ebee'
   },
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class Header extends Component {
   render() {
@@ -24,8 +25,12 @@ class Header extends Component {
 
     return (
       <div style={styles.styleHeader}>
-         <h2 style={styles.styleText}>{this.props.headerText}</h2>
-        </div>
+        <Link
+            to={{pathname: '/'}}
+            style={{ textDecoration: 'none' }}>
+          <h2 style={styles.styleText}>{this.props.headerText}</h2>
+        </Link>
+      </div>
     );
   }
 }

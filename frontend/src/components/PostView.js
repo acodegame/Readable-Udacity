@@ -5,11 +5,8 @@ import { connect } from 'react-redux';
 import { initializeComments, initializePosts } from '../actions';
 import Modal from './subs/Modal';
 import CreateComment from './CreateComment';
+import Header from './subs/Header';
 
-/**
- *  TODO - Comment count is not updating, have to do something where we need to catch
- *  addComment action twice in Post reducer as well as in Comments reducer.
- */
 class PostView extends Component {
   state = {
     show: false,
@@ -55,6 +52,19 @@ class PostView extends Component {
         margin: '10px',
         width: '800px',
         padding: '15px'
+      },
+      siteWrapper: {
+        display: 'flex',
+        flexDirection: "column",
+        minHeight: '100vh'
+      },
+      site: {
+        display: 'flex',
+        flexGrow: '1',
+        background: '#e9ebee'
+      },
+      postView: {
+        marginTop: '50px'
       }
     }
     if (this.props.comments === undefined || this.props.post === undefined) {
@@ -62,21 +72,27 @@ class PostView extends Component {
     }
     const post = this.props.post;
     return (
-      <div className='postView'>
-        <Post {...post} key={post.id} onCommentClick={this.showCommentModal}/>
-        <div className='comments'>
-          {this.props.comments.map(comment => <Comment {...comment} key={comment.id} />)}
+
+      <div style={styles.siteWrapper}>
+        <Header headerText="Readable"/>
+        <div style={styles.site}>
+          <div style={styles.postView}>
+            <Post {...post} key={post.id} onCommentClick={this.showCommentModal}/>
+            <div className='comments'>
+              {this.props.comments.map(comment => <Comment {...comment} key={comment.id} />)}
+            </div>
+            <input
+              onFocus={ this.showCommentModal }
+              style={styles.addComment}
+              placeholder="Add your comment here..."
+            />
+            <Modal show={this.state.show} handleClose={this.hideCommentModal}>
+              <CreateComment
+                afterSubmit={this.hideCommentModal}
+                parentId={post.id} />
+            </Modal>
+          </div>
         </div>
-        <input
-          onFocus={ this.showCommentModal }
-          style={styles.addComment}
-          placeholder="Add your comment here..."
-        />
-        <Modal show={this.state.show} handleClose={this.hideCommentModal}>
-          <CreateComment
-            afterSubmit={this.hideCommentModal}
-            parentId={post.id} />
-        </Modal>
       </div>
     );
   }
