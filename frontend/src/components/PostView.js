@@ -121,7 +121,7 @@ class PostView extends Component {
       <div style={styles.siteWrapper}>
         <Header headerText="Readable"/>
         {
-          this.props.comments === undefined || this.props.post === undefined
+          this.props.comments === undefined || this.props.post === undefined || this.props.post.deleted === true
           ? this.getPostNotFoundView(styles)
           : this.getPostDetailView(styles)
         }
