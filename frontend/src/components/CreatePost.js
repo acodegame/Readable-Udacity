@@ -5,9 +5,46 @@ import { addPost, editPost } from '../actions';
 import PropTypes from 'prop-types';
 import * as Constants from '../constants';
 
+const FormRefsConstants = {
+  AUTHOR: 'author',
+  TITLE: 'title',
+  BODY: 'body',
+  CATEGORY: 'category'
+}
+const DEFAULT_CATEGORY = 'select';
+
 class CreatePost extends Component {
+  state = {
+    errors: undefined,
+  }
+
+  /* This will return an object with the key name as refs of form
+   * fields and value as the error message
+   */
+  validate() {
+    const errors = {};
+
+    // Form refs variables
+    const category = this.refs[FormRefsConstants.CATEGORY].value;
+
+    // Validations
+    if (category === DEFAULT_CATEGORY) {
+      Object.assign(errors, {category: "Please select a category"})
+    }
+    return errors;
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate fields
+    const errors = this.validate();
+    if (!(Object.keys(errors).length === 0 && errors.constructor === Object)) {
+      this.setState({ errors: errors });
+      return;
+    }
+
+    // Submit the form if the validation is successful.
     if (this.props.mode === Constants.ACTION_MODE.CREATE) {
       this.callCreatePostAPI();
     } else if (this.props.mode === Constants.ACTION_MODE.EDIT) {
@@ -63,6 +100,8 @@ class CreatePost extends Component {
     const createPostForm = (
       <div className="create-post-form">
         <form onSubmit={this.handleSubmit}>
+
+          {/* Author field */}
           <label>
             Author:
             { this.props.mode === Constants.ACTION_MODE.EDIT
@@ -70,32 +109,45 @@ class CreatePost extends Component {
               :
             <input
               type="text"
-              ref="author"
+              ref={FormRefsConstants.AUTHOR}
               className="create-post-author"
               placeholder="Your name..."
               required
             />}
-          </label>
+          </label><br/>
+          {this.state.errors && this.state.errors[FormRefsConstants.AUTHOR]}
+
+          {/* Title field */}
           <label>
             Title:
             <input
                 type="text"
-                ref="title"
+                ref={FormRefsConstants.TITLE}
                 defaultValue={this.props.data && this.props.data.title}
                 className="create-post-author"
                 placeholder="Your name..."
                 required
             />
-          </label>
+          </label><br/>
+          {this.state.errors && this.state.errors[FormRefsConstants.TITLE]}
+
+          {/* Body field */}
           <label>
             Body:
-            <textarea ref="body" defaultValue={this.props.data && this.props.data.body} />
-          </label>
-          <select ref="category" defaultValue={this.props.data && this.props.data.category} >
+            <textarea ref={FormRefsConstants.BODY} defaultValue={this.props.data && this.props.data.body} />
+          </label><br/>
+          {this.state.errors && this.state.errors[FormRefsConstants.BODY]}
+
+          {/* Category field */}
+          <select ref={FormRefsConstants.CATEGORY} defaultValue={this.props.data ? this.props.data.category : DEFAULT_CATEGORY} >
+            <option value={DEFAULT_CATEGORY} disabled hidden>Select category--</option>
             {this.props.categories.map(category => (
               <option value = {category.name} key = {category.name}>{category.name}</option>
             ))}
-          </select>
+          </select><br/>
+          {this.state.errors && this.state.errors[FormRefsConstants.CATEGORY]}
+
+          {/* Action buttons */}
           <input type="submit" value="Submit" />
           <input type="reset" value="Reset" />
         </form>

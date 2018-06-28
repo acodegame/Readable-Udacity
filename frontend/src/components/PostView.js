@@ -58,6 +58,39 @@ class PostView extends Component {
     }
   }
 
+  getPostDetailView(styles) {
+    return (
+      <div style={styles.site}>
+        <div style={styles.postView}>
+          <Post {...this.props.post} key={this.props.post.id} onCommentClick={this.showCommentModal}/>
+          <div className='comments'>
+            {this.props.comments.map(comment => <Comment {...comment} key={comment.id} />)}
+          </div>
+          <input
+            onFocus={ this.showCommentModal }
+            style={styles.addComment}
+            placeholder="Add your comment here..."
+          />
+          <Modal show={this.state.show} handleClose={this.hideCommentModal}>
+            <CreateComment
+              afterSubmit={this.hideCommentModal}
+              parentId={this.props.post.id} />
+          </Modal>
+        </div>
+      </div>
+    );
+  }
+
+  getPostNotFoundView(styles) {
+    return (
+      <div style={styles.site}>
+        <div style={styles.postView}>
+          Post not found.
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const styles = {
       addComment: {
@@ -77,34 +110,21 @@ class PostView extends Component {
       },
       postView: {
         marginTop: '50px'
-      }
-    }
-    if (this.props.comments === undefined || this.props.post === undefined) {
-      return null;
+      },
+      postNotFoundView: {
+        marginLeft: '50px'
+      },
     }
     const post = this.props.post;
     return (
 
       <div style={styles.siteWrapper}>
         <Header headerText="Readable"/>
-        <div style={styles.site}>
-          <div style={styles.postView}>
-            <Post {...post} key={post.id} onCommentClick={this.showCommentModal}/>
-            <div className='comments'>
-              {this.props.comments.map(comment => <Comment {...comment} key={comment.id} />)}
-            </div>
-            <input
-              onFocus={ this.showCommentModal }
-              style={styles.addComment}
-              placeholder="Add your comment here..."
-            />
-            <Modal show={this.state.show} handleClose={this.hideCommentModal}>
-              <CreateComment
-                afterSubmit={this.hideCommentModal}
-                parentId={post.id} />
-            </Modal>
-          </div>
-        </div>
+        {
+          this.props.comments === undefined || this.props.post === undefined
+          ? this.getPostNotFoundView(styles)
+          : this.getPostDetailView(styles)
+        }
         {this.props.categories && <RightPane categories={this.props.categories}/>}
       </div>
     );
